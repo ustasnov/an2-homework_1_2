@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="nmedia">НМедиа!</string>
+    <string name="description_post_author_avatar">Аватар Нетологии</string>
+    <string name="description_post_menu">Меню поста</string>
+    <string name="press_if_like">Нажми, если понравилось</string>
+    <string name="share_post">Поделись сообщением</string>
+    <string name="views">Просмотры</string>
 </resources>
