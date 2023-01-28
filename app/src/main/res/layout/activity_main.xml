@@ -65,7 +65,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="avatar,published,menu" />
+        app:constraint_referenced_ids="avatar,published,menu"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="80dp" />
 
     <TextView
         android:id="@+id/postText"
@@ -89,7 +91,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="postText" />
+        app:constraint_referenced_ids="postText"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="351dp" />
 
     <ImageButton
         android:id="@+id/favorite"
@@ -110,7 +114,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/post_line_spase"
-        android:text="@string/likes"
+        android:text=""
         app:layout_constraintBottom_toBottomOf="@+id/favorite"
         app:layout_constraintStart_toEndOf="@id/favorite"
         app:layout_constraintTop_toTopOf="@+id/favorite"
@@ -136,7 +140,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/post_line_spase"
-        android:text="@string/shared"
+        android:text=""
         app:layout_constraintBottom_toBottomOf="@+id/share"
         app:layout_constraintStart_toEndOf="@id/share"
         app:layout_constraintTop_toTopOf="@+id/share"
@@ -161,7 +165,7 @@
         android:id="@+id/views"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/viewed"
+        android:text=""
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view"
