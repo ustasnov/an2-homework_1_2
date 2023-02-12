@@ -12,4 +12,10 @@
     <string name="likes" translatable="false">9.9K</string>
     <string name="shared" translatable="false">5</string>
     <string name="viewed" translatable="false">5</string>
+    <string name="edit">Edit</string>
+    <string name="remove">Remove</string>
+    <string name="post_edit_text">Post Text</string>
+    <string name="save">Save</string>
+    <string name="error_empty_content">Сontent cannot be empty</string>
+    <string name="cancel_post_text_changes">Cancel post text changes</string>
 </resources>

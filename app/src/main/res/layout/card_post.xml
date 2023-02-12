@@ -73,11 +73,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_spacing"
-        android:layout_marginBottom="16dp"
         android:autoLink="web"
         android:lineSpacingExtra="@dimen/post_line_spase"
         android:linksClickable="true"
         android:text="@string/post_text"
+        android:textAlignment="textStart"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -178,5 +178,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/favorite" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
