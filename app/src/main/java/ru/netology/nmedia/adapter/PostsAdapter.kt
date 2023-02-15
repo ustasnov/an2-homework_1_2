@@ -42,11 +42,9 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             postText.text = post.content
-            favorite.setImageResource(
-                if (post.likedByMe) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_baseline_favorite_border_24
-            )
-            likes.text = formatValue(post.likes)
-            shared.text = formatValue(post.shared)
+            favorite.isChecked = post.likedByMe
+            favorite.text = formatValue(post.likes)
+            share.text = formatValue(post.shared)
             views.text = formatValue(post.views)
 
             favorite.setOnClickListener {

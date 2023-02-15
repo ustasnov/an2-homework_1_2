@@ -107,15 +107,19 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 viewModel.changeContent(text.toString())
+                val isNewPost = viewModel.edited.value?.id == 0L
                 viewModel.save()
 
                 setText("")
                 clearFocus()
                 AndroidUtils.hideKeyboard(this)
-            }
-            val postAdapter = binding.list.getAdapter()
-            if (postAdapter != null) {
-                binding.list.scrollToPosition(postAdapter.getItemCount() - 1)
+
+                if (isNewPost) {
+                    val postAdapter = binding.list.getAdapter()
+                    if (postAdapter != null) {
+                        binding.list.scrollToPosition(postAdapter.getItemCount() - 1)
+                    }
+                }
             }
         }
 
