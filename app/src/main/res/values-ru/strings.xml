@@ -12,4 +12,5 @@
     <string name="save">Сохранить</string>
     <string name="error_empty_content">Текст поста не может быть пустым!</string>
     <string name="cancel_post_text_changes">Отменить изменения</string>
+    <string name="view_move_description">Просмотр видео</string>
 </resources>
