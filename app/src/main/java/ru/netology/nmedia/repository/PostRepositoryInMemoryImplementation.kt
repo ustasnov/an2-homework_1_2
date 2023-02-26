@@ -20,7 +20,8 @@ class PostRepositoryInMemoryImplementation : PostRepository {
             likedByMe = false,
             likes = 9999.0,
             shared = 9.0,
-            views = 1000000.0
+            views = 1000000.0,
+            video = "https://www.youtube.com/watch?v=WhWc3b3KhnY"
         ),
         Post(
             id = nextId++,
@@ -30,7 +31,8 @@ class PostRepositoryInMemoryImplementation : PostRepository {
             likedByMe = false,
             likes = 999.0,
             shared = 5.0,
-            views = 500.0
+            views = 500.0,
+            video = ""
         ),
         Post(
             id = nextId++,
@@ -40,7 +42,8 @@ class PostRepositoryInMemoryImplementation : PostRepository {
             likedByMe = false,
             likes = 9.0,
             shared = 3.0,
-            views = 200.0
+            views = 200.0,
+            video = ""
         ),
         Post(
             id = nextId++,
@@ -50,7 +53,8 @@ class PostRepositoryInMemoryImplementation : PostRepository {
             likedByMe = false,
             likes = 5.0,
             shared = 1.0,
-            views = 10.0
+            views = 10.0,
+            video = ""
         )
     )
 
@@ -113,5 +117,4 @@ class PostRepositoryInMemoryImplementation : PostRepository {
         }
         data.value = posts
     }
-
 }

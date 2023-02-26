@@ -66,6 +66,33 @@
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="80dp" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/videoGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="videoPreview, playVideo" />
+
+    <ImageView
+        android:id="@+id/videoPreview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/view_move_description"
+        android:scaleType="fitXY"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
+        app:srcCompat="@drawable/youtube"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <ImageView
+        android:id="@+id/playVideo"
+        android:layout_width="@dimen/size_80dp"
+        android:layout_height="@dimen/size_80dp"
+        android:contentDescription="@string/view_move_description"
+        app:layout_constraintBottom_toBottomOf="@id/videoPreview"
+        app:layout_constraintEnd_toEndOf="@id/videoPreview"
+        app:layout_constraintStart_toStartOf="@id/videoPreview"
+        app:layout_constraintTop_toTopOf="@id/videoPreview"
+        app:srcCompat="@drawable/ic_play_80" />
+
     <TextView
         android:id="@+id/postText"
         android:layout_width="wrap_content"
@@ -79,7 +106,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrier"
+        app:layout_constraintTop_toBottomOf="@id/videoPreview"
         tools:text="@sample/posts.json/data/postText" />
 
     <androidx.constraintlayout.widget.Barrier
@@ -111,7 +138,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/common_spacing"
         android:layout_marginTop="@dimen/common_spacing"
-        android:checkable="false"
         android:contentDescription="@string/share_post"
         android:minWidth="@dimen/avatar_size"
         android:minHeight="@dimen/avatar_size"
@@ -125,7 +151,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_spacing"
         android:layout_marginEnd="@dimen/post_line_spase"
-        android:checkable="false"
         android:contentDescription="@string/views"
         android:minWidth="@dimen/avatar_size"
         android:minHeight="@dimen/avatar_size"

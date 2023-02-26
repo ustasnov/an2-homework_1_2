@@ -18,4 +18,5 @@
     <string name="save">Save</string>
     <string name="error_empty_content">Сontent cannot be empty</string>
     <string name="cancel_post_text_changes">Cancel post text changes</string>
+    <string name="view_move_description">View move</string>
 </resources>

@@ -1,8 +1,10 @@
 package ru.netology.nmedia.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,15 +18,16 @@ interface OnInteractionListener {
     fun onShare(post: Post) {}
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
-    fun onCancel()
+    fun onPlayVideo(post: Post)
 }
 
 class PostsAdapter(
-    private val onInteractionListener: OnInteractionListener
+    private val onInteractionListener: OnInteractionListener,
+    private val editPostContract: ActivityResultLauncher<String?>
 ) : ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(binding, onInteractionListener)
+        return PostViewHolder(binding, onInteractionListener, editPostContract)
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
@@ -35,7 +38,8 @@ class PostsAdapter(
 
 class PostViewHolder(
     private val binding: CardPostBinding,
-    private val onInteractionListener: OnInteractionListener
+    private val onInteractionListener: OnInteractionListener,
+    private val editPostContract: ActivityResultLauncher<String?>
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post) {
         binding.apply {
@@ -46,6 +50,19 @@ class PostViewHolder(
             favorite.text = formatValue(post.likes)
             share.text = formatValue(post.shared)
             views.text = formatValue(post.views)
+
+            when (post.video.isNullOrEmpty()) {
+                true -> videoGroup.visibility = View.GONE
+                else -> videoGroup.visibility = View.VISIBLE
+            }
+
+            videoPreview.setOnClickListener {
+                onInteractionListener.onPlayVideo(post)
+            }
+
+            playVideo.setOnClickListener {
+                onInteractionListener.onPlayVideo(post)
+            }
 
             favorite.setOnClickListener {
                 onInteractionListener.onLike(post)
@@ -66,6 +83,7 @@ class PostViewHolder(
                             }
                             R.id.edit -> {
                                 onInteractionListener.onEdit(post)
+                                editPostContract.launch(post.content)
                                 true
                             }
                             else -> false
