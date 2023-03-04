@@ -23,6 +23,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PostRepository = PostRepositoryFileImplementation(application)
     val data = repository.getAll()
     val edited = MutableLiveData(empty)
+    var isNewPost = false
 
     fun save() {
         edited.value?.let {
@@ -32,6 +33,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun edit(post: Post) {
+        toggleNewPost(false)
         edited.value = post
     }
 
@@ -43,8 +45,27 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = edited.value?.copy(content = text)
     }
 
-    fun likeById(id: Long) = repository.likeById(id)
-    fun shareById(id: Long) = repository.shareById(id)
-    fun viewById(id: Long) = repository.viewById(id)
-    fun removeById(id: Long) = repository.removeById(id)
+    fun toggleNewPost(isNew: Boolean) {
+        isNewPost = isNew
+    }
+
+    fun likeById(id: Long) {
+        toggleNewPost(false)
+        repository.likeById(id)
+    }
+
+    fun shareById(id: Long) {
+        toggleNewPost(false)
+        repository.shareById(id)
+    }
+
+    fun viewById(id: Long) {
+        toggleNewPost(false)
+        repository.viewById(id)
+    }
+
+    fun removeById(id: Long) {
+        toggleNewPost(false)
+        repository.removeById(id)
+    }
 }
