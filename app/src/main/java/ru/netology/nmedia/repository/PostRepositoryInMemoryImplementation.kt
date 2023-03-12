@@ -117,4 +117,12 @@ class PostRepositoryInMemoryImplementation : PostRepository {
         }
         data.value = posts
     }
+
+    override fun saveNewPostContent(text: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getNewPostContent(): LiveData<String> {
+        TODO("Not yet implemented")
+    }
 }

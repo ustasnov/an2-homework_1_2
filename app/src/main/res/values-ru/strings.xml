@@ -14,4 +14,5 @@
     <string name="cancel_post_text_changes">Отменить изменения</string>
     <string name="view_move_description">Просмотр видео</string>
     <string name="hello_blank_fragment">Пустой фрагмент</string>
+    <string name="authorName">Угаров Станислав</string>
 </resources>
