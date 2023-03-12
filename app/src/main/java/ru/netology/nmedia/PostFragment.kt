@@ -4,9 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.NewPostFragment.Companion.textArg
@@ -17,15 +16,24 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.utils.LongArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
-class PostFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val binding = FragmentPostBinding.inflate(layoutInflater, container, false)
-        val viewModel: PostViewModel by activityViewModels()
-        val viewHolder = PostViewHolder(binding.post, object : OnInteractionListener {
+class PostFragment : Fragment(R.layout.fragment_post) {
+    var _binding: FragmentPostBinding? = null
+    val binding: FragmentPostBinding
+        get() = _binding!!
+
+    val viewModel: PostViewModel by activityViewModels()
+
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            findNavController().navigateUp()
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentPostBinding.bind(view)
+
+        val viewHolder = PostViewHolder(binding.postFr, object : OnInteractionListener {
             override fun onLike(post: Post) {
                 viewModel.likeById(post.id)
             }
@@ -67,14 +75,23 @@ class PostFragment : Fragment() {
 
         val postId = requireArguments().idArg
 
-        binding.post.apply {
+        binding.postFr.apply {
             viewModel.data.observe(viewLifecycleOwner) { it ->
                 val post = it.find { it.id == postId } ?: return@observe
                 post.let { viewHolder.bind(post) }
             }
         }
 
-        return binding.root
+        setupBackPressed()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setupBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(backPressedCallback)
     }
 
     companion object {

@@ -3,9 +3,7 @@ package ru.netology.nmedia
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -48,14 +46,16 @@ fun formatValue(value: Double): String {
     }
 }
 
-class FeedFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val binding = FragmentFeedBinding.inflate(layoutInflater, container, false)
-        val viewModel: PostViewModel by activityViewModels()
+class FeedFragment : Fragment(R.layout.fragment_feed) {
+    var _binding: FragmentFeedBinding? = null
+    val binding: FragmentFeedBinding
+        get() = _binding!!
+
+    val viewModel: PostViewModel by activityViewModels()
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentFeedBinding.bind(view)
         val adapter = PostsAdapter(object : OnInteractionListener {
 
             override fun onLike(post: Post) {
@@ -118,7 +118,10 @@ class FeedFragment : Fragment() {
             viewModel.edit(empty)
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
+    }
 
-        return binding.root
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
