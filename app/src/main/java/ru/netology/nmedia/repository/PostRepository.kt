@@ -10,4 +10,6 @@ interface PostRepository {
     fun viewById(id: Long)
     fun removeById(id: Long)
     fun save(post: Post)
+    fun saveNewPostContent(text: String)
+    fun getNewPostContent(): LiveData<String>
 }

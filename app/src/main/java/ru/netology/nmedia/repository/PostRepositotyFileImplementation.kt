@@ -98,6 +98,14 @@ class PostRepositoryFileImplementation(
         sync()
     }
 
+    override fun saveNewPostContent(text: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getNewPostContent(): LiveData<String> {
+        TODO("Not yet implemented")
+    }
+
     private fun sync() {
         context.openFileOutput(filename, Context.MODE_PRIVATE).bufferedWriter().use {
             it.write(gson.toJson(posts))
