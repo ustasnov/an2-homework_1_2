@@ -15,4 +15,11 @@
     <string name="view_move_description">Просмотр видео</string>
     <string name="hello_blank_fragment">Пустой фрагмент</string>
     <string name="authorName">Угаров Станислав</string>
+    <string name="channel_remote_name">Уведомления с сервера</string>
+    <string name="channel_remote_description">Уведомления с удалённого сервера</string>
+    <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
+    <string name="google_play_unavailable">Google Api Недоступно</string>
+    <string name="notification_add_new_post"><big><b>%1$s опубликовал пост:</b></big></string>
+    <string name="new_notification">В приложении появились новые виды уведомлений</string>
+    <string name="notification_update_app">Обновите приложение, чтобы получать новые виды уведомления</string>
 </resources>
