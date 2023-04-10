@@ -35,7 +35,7 @@ class PostFragment : Fragment(R.layout.fragment_post) {
 
         val viewHolder = PostViewHolder(binding.postFr, object : OnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                viewModel.likeById(post)
             }
 
             override fun onShare(post: Post) {
@@ -77,7 +77,7 @@ class PostFragment : Fragment(R.layout.fragment_post) {
 
         binding.postFr.apply {
             viewModel.data.observe(viewLifecycleOwner) { it ->
-                val post = it.find { it.id == postId } ?: return@observe
+                val post = it.posts.find { it.id == postId } ?: return@observe
                 post.let { viewHolder.bind(post) }
             }
         }

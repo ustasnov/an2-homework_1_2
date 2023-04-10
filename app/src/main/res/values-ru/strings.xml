@@ -22,4 +22,7 @@
     <string name="notification_add_new_post"><big><b>%1$s опубликовал пост:</b></big></string>
     <string name="new_notification">В приложении появились новые виды уведомлений</string>
     <string name="notification_update_app">Обновите приложение, чтобы получать новые виды уведомления</string>
+    <string name="error_loading">Что-то пошло не так. Попробуйте позднее</string>
+    <string name="retry_loading">Повторить</string>
+    <string name="empty_posts">Постов нет. Если создадите новый пост, то он появится здесь</string>
 </resources>

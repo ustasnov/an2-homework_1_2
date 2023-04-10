@@ -5,9 +5,9 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 
 object AndroidUtils {
-    fun hideKeyboard(context: Context, view: View) {
+    fun hideKeyboard(view: View) {
         view.postDelayed({
-            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }, 200)
     }

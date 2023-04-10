@@ -28,4 +28,7 @@
     <string name="notification_add_new_post"><big><b>%1$s published post:</b></big></string>
     <string name="new_notification">There are new kind of notifications in app</string>
     <string name="notification_update_app">Update app to receive new kind of notifications</string>
+    <string name="error_loading">Something went wrong. Try again later</string>
+    <string name="retry_loading">Retry</string>
+    <string name="empty_posts">There are no posts. If you create a new post, it will appear here</string>
 </resources>
