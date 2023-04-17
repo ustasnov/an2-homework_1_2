@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
+import ru.netology.nmedia.utils.AndroidUtils
 import ru.netology.nmedia.utils.AndroidUtils.showKeyboard
 import ru.netology.nmedia.utils.BooleanArg
 import ru.netology.nmedia.utils.StringArg
@@ -58,7 +59,11 @@ class NewPostFragment : Fragment(R.layout.fragment_new_post) {
                 viewModel.changeContent(text)
                 viewModel.save()
                 viewModel.saveNewPostContent("")
-                findNavController().navigateUp()
+                AndroidUtils.hideKeyboard(requireView())
+                viewModel.postCreated.observe(viewLifecycleOwner) {
+                    viewModel.loadPosts()
+                    findNavController().navigateUp()
+                }
             }
         }
 

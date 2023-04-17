@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -59,7 +60,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         val adapter = PostsAdapter(object : OnInteractionListener {
 
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                viewModel.likeById(post)
             }
 
             override fun onShare(post: Post) {
@@ -106,17 +107,31 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         })
 
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            adapter.submitList(posts) {
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.posts) {
                 if (viewModel.isNewPost) {
-                    binding.list.scrollToPosition(adapter.currentList.size - 1)
+                    binding.list.scrollToPosition(0)
                 }
             }
+            binding.progress.isVisible = state.loading
+            binding.errorGroup.isVisible = state.error
+            binding.emptyText.isVisible = state.empty
         }
 
         binding.add.setOnClickListener {
             viewModel.edit(empty)
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+        }
+
+        binding.retryButton.setOnClickListener {
+            viewModel.loadPosts()
+        }
+
+        val swipeRefresh = binding.swiperefresh
+        swipeRefresh.setOnRefreshListener {
+            swipeRefresh.isRefreshing = true
+            viewModel.loadPosts()
+            swipeRefresh.isRefreshing = false
         }
     }
 
