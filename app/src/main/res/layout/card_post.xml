@@ -116,6 +116,24 @@
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="351dp" />
 
+    <ImageView
+        android:id="@+id/attachment"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/attachment_dimen"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/view_move_description"
+        android:scaleType="fitXY"
+        app:layout_constraintTop_toBottomOf="@id/barrier1"
+        app:srcCompat="@drawable/youtube"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="attachment" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/favorite"
         style="@style/Widget.AppTheme.FavoriteButton"
@@ -127,7 +145,7 @@
         android:minWidth="@dimen/avatar_size"
         android:minHeight="@dimen/avatar_size"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrier1" />
+        app:layout_constraintTop_toBottomOf="@id/barrier2" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/share"
@@ -140,7 +158,7 @@
         android:minWidth="@dimen/avatar_size"
         android:minHeight="@dimen/avatar_size"
         app:layout_constraintStart_toEndOf="@id/favorite"
-        app:layout_constraintTop_toBottomOf="@id/barrier1" />
+        app:layout_constraintTop_toBottomOf="@id/barrier2" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/views"
@@ -153,7 +171,7 @@
         android:minWidth="@dimen/avatar_size"
         android:minHeight="@dimen/avatar_size"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrier1" />
+        app:layout_constraintTop_toBottomOf="@id/barrier2" />
 
     <View
         android:id="@+id/divider"
