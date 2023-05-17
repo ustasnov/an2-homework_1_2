@@ -87,7 +87,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun likeById(post: Post) {
-        repository.likeById(post, object : PostRepository.GenericCallback<Post> {
+        repository.likeById(post.id, object : PostRepository.GenericCallback<Post> {
             override fun onSuccess(data: Post) {
                 _data.postValue(FeedModel(posts = _data.value?.posts.orEmpty().map {
                     if (it.id == post.id) data else it
