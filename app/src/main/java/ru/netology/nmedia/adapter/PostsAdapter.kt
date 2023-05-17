@@ -4,9 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
@@ -39,6 +41,9 @@ class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
+
+    private val baseUrl = "http://10.0.2.2:9999"
+
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
@@ -48,6 +53,24 @@ class PostViewHolder(
             favorite.text = formatValue(post.likes)
             share.text = formatValue(post.shared)
             views.text = formatValue(post.views)
+
+            Glide.with(avatar)
+                .load("$baseUrl/avatars/${post.authorAvatar}")
+                .circleCrop()
+                .placeholder(R.drawable.ic_loading_100dp)
+                .error(R.drawable.ic_error_100dp)
+                .timeout(10_000)
+                .into(avatar)
+
+            Glide.with(attachment)
+                .load("$baseUrl/images/${post.attachment?.url}")
+                .placeholder(R.drawable.ic_loading_100dp)
+                .error(R.drawable.ic_error_100dp)
+                .timeout(10_000)
+                .into(attachment)
+
+            attachment.contentDescription = post.attachment?.description
+            attachment.isVisible = !post.attachment?.url.isNullOrBlank()
 
             when (post.video.isNullOrEmpty()) {
                 true -> videoGroup.visibility = View.GONE
