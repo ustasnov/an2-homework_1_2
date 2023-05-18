@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -124,6 +125,17 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
 
         binding.retryButton.setOnClickListener {
+            viewModel.loadPosts()
+        }
+
+        viewModel.gotServerError.observe(viewLifecycleOwner) {
+            if (it) {
+                Toast.makeText(
+                    this.context,
+                    getString(R.string.server_error_warning),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
             viewModel.loadPosts()
         }
 

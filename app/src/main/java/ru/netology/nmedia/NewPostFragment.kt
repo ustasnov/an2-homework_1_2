@@ -2,6 +2,7 @@ package ru.netology.nmedia
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -59,17 +60,36 @@ class NewPostFragment : Fragment(R.layout.fragment_new_post) {
                 viewModel.changeContent(text)
                 viewModel.save()
                 viewModel.saveNewPostContent("")
-                AndroidUtils.hideKeyboard(requireView())
-                viewModel.postCreated.observe(viewLifecycleOwner) {
-                    viewModel.loadPosts()
-                    findNavController().navigateUp()
-                }
+            } else {
+                Toast.makeText(
+                    this.context,
+                    getString(R.string.empty_content_warning),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
+            AndroidUtils.hideKeyboard(requireView())
+        }
+
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
+            findNavController().navigateUp()
         }
 
         binding.buttonCancel.setOnClickListener {
             viewModel.toggleNewPost(false)
             viewModel.saveNewPostContent("")
+            findNavController().navigateUp()
+        }
+
+        viewModel.gotServerError.observe(viewLifecycleOwner) {
+            if (it) {
+                Toast.makeText(
+                    this.context,
+                    getString(R.string.server_error_warning),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            viewModel.loadPosts()
             findNavController().navigateUp()
         }
 

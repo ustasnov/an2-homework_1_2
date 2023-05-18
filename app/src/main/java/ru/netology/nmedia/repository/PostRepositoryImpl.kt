@@ -11,6 +11,7 @@ import ru.netology.nmedia.R
 import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository.GenericCallback
+import kotlin.random.Random
 
 class PostRepositoryImpl(
     context: Application
@@ -19,6 +20,9 @@ class PostRepositoryImpl(
     private val key = "newPostContent"
     private var newPostContentValue = MutableLiveData<String>()
     private val currentAuthor = context.getString(R.string.authorName)
+
+    //private var badResponseCode = Random.nextBoolean()
+    private var badResponseCode = false
 
     override fun getAll(postsCallback: GenericCallback<List<Post>>) {
         PostApi.service.getAll()
@@ -44,15 +48,20 @@ class PostRepositoryImpl(
                         postsCallback.onError(RuntimeException(response.message()))
                     }
 
-                    postsCallback.onSuccess(
-                        response.body() ?: throw RuntimeException("body is null")
-                    )
+                    if (!badResponseCode) {
+                        postsCallback.onSuccess(
+                            response.body() ?: throw RuntimeException("body is null")
+                        )
+                    } else {
+                        postsCallback.onError(RuntimeException(response.message()))
+                    }
+                    badResponseCode =! badResponseCode
+
                 }
 
                 override fun onFailure(call: Call<Post>, t: Throwable) {
                     postsCallback.onError(RuntimeException(t))
                 }
-
             })
     }
 
@@ -63,15 +72,20 @@ class PostRepositoryImpl(
                     if (!response.isSuccessful){
                         postsCallback.onError(RuntimeException(response.message()))
                     }
-                    postsCallback.onSuccess(
-                        response.body() ?: throw RuntimeException("body is null")
-                    )
+
+                    if (!badResponseCode) {
+                        postsCallback.onSuccess(
+                            response.body() ?: throw RuntimeException("body is null")
+                        )
+                    } else {
+                        postsCallback.onError(RuntimeException(response.message()))
+                    }
+                    badResponseCode =! badResponseCode
                 }
 
                 override fun onFailure(call: Call<Post>, t: Throwable) {
                     postsCallback.onError(RuntimeException(t))
                 }
-
             })
     }
 
@@ -90,9 +104,14 @@ class PostRepositoryImpl(
                     if (!response.isSuccessful){
                         postsCallback.onError(RuntimeException(response.message()))
                     }
-                    postsCallback.onSuccess(
-                        response.body() ?: throw RuntimeException("body is null")
-                    )
+                    if(!badResponseCode) {
+                        postsCallback.onSuccess(
+                            response.body() ?: throw RuntimeException("body is null")
+                        )
+                    } else{
+                        postsCallback.onError(RuntimeException(response.message()))
+                    }
+                    badResponseCode =! badResponseCode
                 }
 
                 override fun onFailure(call: Call<Post>, t: Throwable) {
@@ -123,7 +142,13 @@ class PostRepositoryImpl(
                     if (!response.isSuccessful){
                         postsCallback.onError(RuntimeException(response.message()))
                     }
-                    postsCallback.onSuccess(Unit)
+
+                    if(!badResponseCode) {
+                        postsCallback.onSuccess(Unit)
+                    } else{
+                        postsCallback.onError(RuntimeException(response.message()))
+                    }
+                    badResponseCode =! badResponseCode
                 }
 
                 override fun onFailure(call: Call<Unit>, t: Throwable) {

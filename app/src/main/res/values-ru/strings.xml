@@ -25,4 +25,6 @@
     <string name="error_loading">Что-то пошло не так. Попробуйте позднее</string>
     <string name="retry_loading">Повторить</string>
     <string name="empty_posts">Постов нет. Если создадите новый пост, то он появится здесь</string>
+    <string name="server_error_warning">Возникла ошибка при запросе к серверу, попробуйте еще раз</string>
+    <string name="empty_content_warning">Пост не может быть пустым</string>
 </resources>
