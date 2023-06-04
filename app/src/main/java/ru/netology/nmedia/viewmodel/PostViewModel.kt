@@ -32,10 +32,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val edited = MutableLiveData(empty)
     var isNewPost = false
 
-
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
+
+    private val _gotServerError = SingleLiveEvent<Boolean>()
+    val gotServerError: LiveData<Boolean>
+        get() = _gotServerError
 
     init {
         loadPosts()
@@ -62,7 +65,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 }
 
                 override fun onError(e: Exception) {
-                    _data.postValue(FeedModel(error = true))
+                    _gotServerError.postValue(true)
                 }
             })
         }
@@ -87,17 +90,31 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun likeById(post: Post) {
-        repository.likeById(post, object : PostRepository.GenericCallback<Post> {
-            override fun onSuccess(data: Post) {
-                _data.postValue(FeedModel(posts = _data.value?.posts.orEmpty().map {
-                    if (it.id == post.id) data else it
-                }))
-            }
+        if (!post.likedByMe) {
+            repository.likeById(post.id, object : PostRepository.GenericCallback<Post> {
+                override fun onSuccess(data: Post) {
+                    _data.postValue(FeedModel(posts = _data.value?.posts.orEmpty().map {
+                        if (it.id == post.id) data else it
+                    }))
+                }
 
-            override fun onError(e: Exception) {
-                _data.postValue(FeedModel(error = true))
-            }
-        })
+                override fun onError(e: Exception) {
+                    _gotServerError.postValue(true)
+                }
+            })
+        } else {
+            repository.unlikeById(post.id, object : PostRepository.GenericCallback<Post> {
+                override fun onSuccess(data: Post) {
+                    _data.postValue(FeedModel(posts = _data.value?.posts.orEmpty().map {
+                        if (it.id == post.id) data else it
+                    }))
+                }
+
+                override fun onError(e: Exception) {
+                    _gotServerError.postValue(true)
+                }
+            })
+        }
     }
 
     fun shareById(id: Long) {
@@ -120,6 +137,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             override fun onError(e: Exception) {
+                _gotServerError.postValue(true)
                 _data.postValue(_data.value?.copy(posts = old))
             }
         })
