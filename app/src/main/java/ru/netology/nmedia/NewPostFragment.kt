@@ -81,18 +81,6 @@ class NewPostFragment : Fragment(R.layout.fragment_new_post) {
             findNavController().navigateUp()
         }
 
-        viewModel.gotServerError.observe(viewLifecycleOwner) {
-            if (it) {
-                Toast.makeText(
-                    this.context,
-                    getString(R.string.server_error_warning),
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-            viewModel.loadPosts()
-            findNavController().navigateUp()
-        }
-
         setupBackPressed()
         showKeyboard(requireContext(), binding.content)
     }

@@ -1,23 +1,28 @@
 package ru.netology.nmedia.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
+import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.entity.PostEntity
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM PostEntity ORDER BY id")
+    @Query("SELECT * FROM PostEntity ORDER BY id DESC")
     fun getAll(): LiveData<List<PostEntity>>
 
-    @Insert
-    fun insert(post: PostEntity)
+    @Query("SELECT COUNT(*) == 0 FROM PostEntity")
+    suspend fun isEmpty(): Boolean
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(post: PostEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(posts: List<PostEntity>)
 
     @Query("UPDATE PostEntity SET content = :content WHERE id = :id")
-    fun updateContentById(id: Long, content: String)
+    suspend fun updateContentById(id: Long, content: String)
 
-    fun save(post: PostEntity) =
+    suspend fun save(post: PostEntity) =
         if (post.id == 0L) insert(post) else updateContentById(post.id, post.content)
 
     @Query(
@@ -28,10 +33,18 @@ interface PostDao {
         WHERE id = :id
         """
     )
-    fun likeById(id: Long)
+    suspend fun likeById(id: Long)
+
+    @Query("""
+        UPDATE PostEntity SET
+        likes = likes + CASE WHEN likedByMe THEN -1 ELSE 1 END, 
+        likedByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END
+        WHERE id = :id
+        """)
+    suspend fun unlikeById(id: Long)
 
     @Query("DELETE FROM PostEntity WHERE id = :id")
-    fun removeById(id: Long)
+    suspend fun removeById(id: Long)
 
     @Query(
         """
@@ -40,5 +53,13 @@ interface PostDao {
         WHERE id = :id
         """
     )
-    fun shareById(id: Long)
+    suspend fun shareById(id: Long)
 }
+
+class Converters {
+    @TypeConverter
+    fun toAttachmentType(value: String) = enumValueOf<AttachmentType>(value)
+    @TypeConverter
+    fun fromAttachmentType(value: AttachmentType) = value.name
+}
+
