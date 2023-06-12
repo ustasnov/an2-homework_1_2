@@ -4,16 +4,17 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.PostFragment.Companion.idArg
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
+import ru.netology.nmedia.dto.ErrorType
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.PostViewModel
 import ru.netology.nmedia.viewmodel.empty
@@ -114,9 +115,33 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     binding.list.scrollToPosition(0)
                 }
             }
-            binding.progress.isVisible = state.loading
-            binding.errorGroup.isVisible = state.error
+            //binding.progress.isVisible = state.loading
+            //binding.errorGroup.isVisible = state.error
             binding.emptyText.isVisible = state.empty
+        }
+
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
+            binding.swiperefresh.isRefreshing = state.refreshing
+            when (state.error) {
+                ErrorType.LOADING ->
+                    Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                        .show()
+                ErrorType.SAVE ->
+                    Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.retry_loading) { viewModel.save() }
+                        .show()
+                ErrorType.LIKE ->
+                    Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.retry_loading) { viewModel.likeById(viewModel.currentPost.value!!) }
+                        .show()
+                ErrorType.REMOVE ->
+                    Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.retry_loading) { viewModel.removeById(viewModel.currentPostId.value!!) }
+                        .show()
+                null -> Unit
+
+            }
         }
 
         binding.add.setOnClickListener {
@@ -124,25 +149,16 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
+        /*
         binding.retryButton.setOnClickListener {
             viewModel.loadPosts()
         }
-
-        viewModel.gotServerError.observe(viewLifecycleOwner) {
-            if (it) {
-                Toast.makeText(
-                    this.context,
-                    getString(R.string.server_error_warning),
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-            viewModel.loadPosts()
-        }
+        */
 
         val swipeRefresh = binding.swiperefresh
         swipeRefresh.setOnRefreshListener {
             swipeRefresh.isRefreshing = true
-            viewModel.loadPosts()
+            viewModel.refresh()
             swipeRefresh.isRefreshing = false
         }
     }

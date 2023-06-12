@@ -10,7 +10,7 @@ data class Post(
     val likes: Double,
     val shared: Double,
     val views: Double,
-    val video: String?,
+    val video: String? = null,
     var attachment: Attachment? = null,
 )
 
@@ -22,4 +22,11 @@ data class Attachment(
 
 enum class AttachmentType {
     IMAGE
+}
+
+enum class ErrorType {
+    LOADING,
+    SAVE,
+    REMOVE,
+    LIKE
 }
