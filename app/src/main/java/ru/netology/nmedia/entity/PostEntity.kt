@@ -21,12 +21,13 @@ data class PostEntity(
     val views: Double,
     val video: String?,
     @Embedded
-    var attachment: AttachmentEmbeddable?
+    var attachment: AttachmentEmbeddable?,
+    val hidden: Boolean = false,
 ) {
     fun toDto() = Post(id, author, authorAvatar, content, published, likedByMe, likes, shared, views, video, attachment?.toDto())
 
     companion object {
-        fun fromDto(dto: Post) =
+        fun fromDto(dto: Post, hidden: Boolean) =
             PostEntity(
                 dto.id,
                 dto.author,
@@ -38,7 +39,8 @@ data class PostEntity(
                 dto.shared,
                 dto.views,
                 dto.video,
-                AttachmentEmbeddable.fromDto(dto.attachment)
+                AttachmentEmbeddable.fromDto(dto.attachment),
+                hidden = hidden
             )
     }
 }
@@ -58,4 +60,6 @@ data class AttachmentEmbeddable(
 }
 
 fun List<PostEntity>.toDto(): List<Post> = map(PostEntity::toDto)
-fun List<Post>.toEntity(): List<PostEntity> = map(PostEntity::fromDto)
+fun List<Post>.toEntity(hidden: Boolean = false): List<PostEntity> = map {
+    PostEntity.fromDto(it, hidden)
+}
