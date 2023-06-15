@@ -113,11 +113,8 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts) {
-                if (viewModel.isNewPost) {
-                    binding.list.smoothScrollToPosition(0)
-                }
-            }
+
+            adapter.submitList(state.posts)
             binding.emptyText.isVisible = state.empty
         }
 
@@ -165,7 +162,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
         binding.newPostsButton.setOnClickListener {
             viewModel.showHiddenPosts()
-            binding.list.smoothScrollToPosition(0)
             it.visibility = GONE
         }
 
