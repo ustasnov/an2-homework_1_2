@@ -4,10 +4,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.PostFragment.Companion.idArg
@@ -110,13 +113,8 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts) {
-                if (viewModel.isNewPost) {
-                    binding.list.scrollToPosition(0)
-                }
-            }
-            //binding.progress.isVisible = state.loading
-            //binding.errorGroup.isVisible = state.error
+
+            adapter.submitList(state.posts)
             binding.emptyText.isVisible = state.empty
         }
 
@@ -140,20 +138,32 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                         .setAction(R.string.retry_loading) { viewModel.removeById(viewModel.currentPostId.value!!) }
                         .show()
                 null -> Unit
-
             }
         }
+
+        adapter.registerAdapterDataObserver(object: AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (positionStart == 0) {
+                    binding.list.smoothScrollToPosition(0)
+                }
+            }
+        })
 
         binding.add.setOnClickListener {
             viewModel.edit(empty)
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
-        /*
-        binding.retryButton.setOnClickListener {
-            viewModel.loadPosts()
+        viewModel.newerCount.observe(viewLifecycleOwner){
+            if (it > 0) {
+                binding.newPostsButton.visibility = VISIBLE
+            }
         }
-        */
+
+        binding.newPostsButton.setOnClickListener {
+            viewModel.showHiddenPosts()
+            it.visibility = GONE
+        }
 
         val swipeRefresh = binding.swiperefresh
         swipeRefresh.setOnRefreshListener {
