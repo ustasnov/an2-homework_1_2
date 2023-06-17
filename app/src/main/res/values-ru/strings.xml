@@ -28,4 +28,5 @@
     <string name="server_error_warning">Возникла ошибка при запросе к серверу, попробуйте еще раз</string>
     <string name="empty_content_warning">Пост не может быть пустым</string>
     <string name="new_posts">Свежие записи</string>
+    <string name="clear">Очистить</string>
 </resources>

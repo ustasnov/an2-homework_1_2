@@ -11,6 +11,7 @@ import ru.netology.nmedia.dto.ErrorType
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
+import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.utils.SingleLiveEvent
@@ -38,6 +39,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
+
+    private val _photo = MutableLiveData<PhotoModel?>()
+    val photo: LiveData<PhotoModel?>
+        get() = _photo
 
     val edited = MutableLiveData(empty)
     var isNewPost = false
@@ -175,5 +180,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getNewPostCont(): LiveData<String> {
         return repository.getNewPostContent()
+    }
+
+    fun clearPhoto() {
+        _photo.value = null
+    }
+
+    fun setPhoto(photoModel: PhotoModel) {
+        _photo.value = photoModel
     }
 }
