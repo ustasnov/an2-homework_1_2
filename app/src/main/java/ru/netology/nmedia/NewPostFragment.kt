@@ -20,7 +20,6 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.utils.AndroidUtils
-import ru.netology.nmedia.utils.AndroidUtils.showKeyboard
 import ru.netology.nmedia.utils.BooleanArg
 import ru.netology.nmedia.utils.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
@@ -33,19 +32,20 @@ class NewPostFragment : Fragment(R.layout.fragment_new_post) {
 
     val viewModel: PostViewModel by activityViewModels()
 
-    private val photoPickerContract = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        when (it.resultCode) {
-            ImagePicker.RESULT_ERROR -> Toast.makeText(
-                requireContext(),
-                "Photo pick error",
-                Toast.LENGTH_SHORT
-            ).show()
-            Activity.RESULT_OK -> {
-                val uri = it.data?.data ?: return@registerForActivityResult
-                viewModel.setPhoto(PhotoModel(uri, uri.toFile()))
+    private val photoPickerContract =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            when (it.resultCode) {
+                ImagePicker.RESULT_ERROR -> Toast.makeText(
+                    requireContext(),
+                    "Photo pick error",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Activity.RESULT_OK -> {
+                    val uri = it.data?.data ?: return@registerForActivityResult
+                    viewModel.setPhoto(PhotoModel(uri, uri.toFile()))
+                }
             }
         }
-    }
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -63,9 +63,6 @@ class NewPostFragment : Fragment(R.layout.fragment_new_post) {
         arguments?.isNewPost.let {
             if (it == null || it) {
                 viewModel.toggleNewPost(true)
-                //binding.buttonOk.setImageResource(R.drawable.ic_add_24)
-            } else {
-                //binding.buttonOk.setImageResource(R.drawable.ic_check_24)
             }
         }
 
@@ -78,24 +75,6 @@ class NewPostFragment : Fragment(R.layout.fragment_new_post) {
             }
         }
         binding.content.requestFocus()
-
-        /*
-        binding.buttonOk.setOnClickListener {
-            val text = binding.content.text.toString()
-            if (text.isNotBlank()) {
-                viewModel.changeContent(text)
-                viewModel.save()
-                viewModel.saveNewPostContent("")
-            } else {
-                Toast.makeText(
-                    this.context,
-                    getString(R.string.empty_content_warning),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            AndroidUtils.hideKeyboard(requireView())
-        }
-        */
 
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -122,7 +101,7 @@ class NewPostFragment : Fragment(R.layout.fragment_new_post) {
                     }
                     else -> false
                 }
-        })
+        }, viewLifecycleOwner)
 
         viewModel.postCreated.observe(viewLifecycleOwner) {
             viewModel.loadPosts()
@@ -157,16 +136,7 @@ class NewPostFragment : Fragment(R.layout.fragment_new_post) {
             binding.preview.setImageURI(photo.uri)
         }
 
-        /*
-        binding.buttonCancel.setOnClickListener {
-            viewModel.toggleNewPost(false)
-            viewModel.saveNewPostContent("")
-            findNavController().navigateUp()
-        }
-        */
-
         setupBackPressed()
-        showKeyboard(requireContext(), binding.content)
     }
 
     override fun onDestroyView() {

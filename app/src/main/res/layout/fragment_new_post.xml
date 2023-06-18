@@ -23,16 +23,13 @@
                 android:gravity="start|top"
                 android:hint="@string/post_edit_text"
                 android:inputType="textMultiLine"
-                tools:text="@tools:sample/lorem[150]">
-
-                <requestFocus />
-            </EditText>
+                tools:text="@tools:sample/lorem[150]" />
 
             <FrameLayout
-                android:visibility="gone"
                 android:id="@+id/previewContainer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/preview"
@@ -78,8 +75,6 @@
             android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/common_spacing"
             app:srcCompat="@drawable/ic_add_photo_24" />
-
     </LinearLayout>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

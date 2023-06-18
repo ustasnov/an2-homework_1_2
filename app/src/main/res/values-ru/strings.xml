@@ -29,4 +29,5 @@
     <string name="empty_content_warning">Пост не может быть пустым</string>
     <string name="new_posts">Свежие записи</string>
     <string name="clear">Очистить</string>
+    <string name="image_description">Изображение</string>
 </resources>

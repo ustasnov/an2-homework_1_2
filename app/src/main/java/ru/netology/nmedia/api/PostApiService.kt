@@ -1,5 +1,6 @@
 package ru.netology.nmedia.api
 
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
@@ -7,19 +8,22 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import ru.netology.nmedia.BuildConfig
+import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
 import java.util.concurrent.TimeUnit
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}api/slow/";
 
 private val client = OkHttpClient.Builder()
-    .connectTimeout(30,TimeUnit.SECONDS)
+    .connectTimeout(30, TimeUnit.SECONDS)
     .run {
-        if(BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             this.addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
-        } else {this}
+        } else {
+            this
+        }
     }
     .build()
 
@@ -48,8 +52,12 @@ interface PostApiService {
 
     @GET("posts/{id}/newer")
     suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>
+
+    @Multipart
+    @POST("media")
+    suspend fun uploadMedia(@Part file: MultipartBody.Part): Response<Media>
 }
 
-object PostApi{
-    val service: PostApiService by lazy {retrofit.create(PostApiService::class.java)}
+object PostApi {
+    val service: PostApiService by lazy { retrofit.create(PostApiService::class.java) }
 }

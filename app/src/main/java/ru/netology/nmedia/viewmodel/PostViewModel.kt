@@ -34,7 +34,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         application, AppDb.getInstance(application).postDao()
     )
     val data: LiveData<FeedModel> =
-        repository.data.map( ::FeedModel ).asLiveData(Dispatchers.Default)
+        repository.data.map(::FeedModel).asLiveData(Dispatchers.Default)
 
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
@@ -67,7 +67,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 0.0,
                 0.0,
                 0.0,
-                ""
+                null,
+                null,
             )
         )
     val currentPost: LiveData<Post>
@@ -116,7 +117,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun save() = viewModelScope.launch {
         try {
             edited.value?.let {
-                repository.save(it)
+                when (val photo = _photo.value) {
+                    null -> repository.save(it)
+                    else -> repository.saveWithAttachment(it, photo)
+                }
             }
             edited.value = empty
             _postCreated.postValue(Unit)

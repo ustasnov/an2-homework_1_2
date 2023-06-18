@@ -15,12 +15,12 @@
             android:id="@+id/newPostsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:text="@string/new_posts"
-            app:icon="@drawable/arrow_up"/>
+            android:visibility="gone"
+            app:icon="@drawable/arrow_up"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/emptyText"
