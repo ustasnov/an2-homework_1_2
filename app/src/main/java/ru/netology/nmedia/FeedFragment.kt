@@ -21,7 +21,7 @@ import ru.netology.nmedia.dto.ErrorType
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.PostViewModel
 import ru.netology.nmedia.viewmodel.empty
-import java.util.Locale
+import java.util.*
 
 fun formatValue(value: Double): String {
     if (value >= 1000000000.0) {
@@ -101,6 +101,14 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 }
             }
 
+            override fun onViewAttachment(post: Post) {
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_postPhotoFragment,
+                    Bundle().apply {
+                        textArg = "${BuildConfig.BASE_URL}media/${post.attachment!!.url}"
+                    })
+            }
+
             override fun onViewPost(post: Post) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_postFragment,
@@ -141,7 +149,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             }
         }
 
-        adapter.registerAdapterDataObserver(object: AdapterDataObserver() {
+        adapter.registerAdapterDataObserver(object : AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 if (positionStart == 0) {
                     binding.list.smoothScrollToPosition(0)
@@ -154,7 +162,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
-        viewModel.newerCount.observe(viewLifecycleOwner){
+        viewModel.newerCount.observe(viewLifecycleOwner) {
             if (it > 0) {
                 binding.newPostsButton.visibility = VISIBLE
             }

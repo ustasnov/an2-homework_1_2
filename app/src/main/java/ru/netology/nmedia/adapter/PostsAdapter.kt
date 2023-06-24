@@ -22,6 +22,7 @@ interface OnInteractionListener {
     fun onRemove(post: Post) {}
     fun onPlayVideo(post: Post) {}
     fun onViewPost(post: Post) {}
+    fun onViewAttachment(post: Post) {}
 }
 
 class PostsAdapter(
@@ -43,8 +44,6 @@ class PostViewHolder(
     private val onInteractionListener: OnInteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    //private val baseUrl = "http://10.0.2.2:9999"
-
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
@@ -64,7 +63,7 @@ class PostViewHolder(
                 .into(avatar)
 
             Glide.with(attachment)
-                .load("${BuildConfig.BASE_URL}/images/${post.attachment?.url}")
+                .load("${BuildConfig.BASE_URL}/media/${post.attachment?.url}")
                 .placeholder(R.drawable.ic_loading_100dp)
                 .error(R.drawable.ic_error_100dp)
                 .timeout(10_000)
@@ -84,6 +83,10 @@ class PostViewHolder(
 
             playVideo.setOnClickListener {
                 onInteractionListener.onPlayVideo(post)
+            }
+
+            attachment.setOnClickListener {
+                onInteractionListener.onViewAttachment(post)
             }
 
             favorite.setOnClickListener {

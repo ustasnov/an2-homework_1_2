@@ -7,15 +7,21 @@ import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.R
 import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.dao.PostDao
+import ru.netology.nmedia.dto.Attachment
+import ru.netology.nmedia.dto.AttachmentType
+import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.toEntity
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.AppError
 import ru.netology.nmedia.error.NetworkError
+import ru.netology.nmedia.model.PhotoModel
 import java.io.IOException
 
 class PostRepositoryImpl(context: Application, private val postDao: PostDao) : PostRepository {
@@ -25,7 +31,7 @@ class PostRepositoryImpl(context: Application, private val postDao: PostDao) : P
     private val currentAuthor = context.getString(R.string.authorName)
 
     override val data: Flow<List<Post>> =
-        postDao.getAll().map {it.map(PostEntity::toDto)}
+        postDao.getAll().map { it.map(PostEntity::toDto) }
 
     override fun getNewer(id: Long): Flow<Int> = flow {
         while (true) {
@@ -74,10 +80,10 @@ class PostRepositoryImpl(context: Application, private val postDao: PostDao) : P
     }
 
     override suspend fun likeById(id: Long) {
-        try{
+        try {
             postDao.likeById(id)
             val response = PostApi.service.likeById(id)
-            if (!response.isSuccessful){
+            if (!response.isSuccessful) {
                 throw RuntimeException(response.message())
             }
         } catch (e: IOException) {
@@ -88,10 +94,10 @@ class PostRepositoryImpl(context: Application, private val postDao: PostDao) : P
     }
 
     override suspend fun unlikeById(id: Long) {
-        try{
+        try {
             postDao.unlikeById(id)
             val response = PostApi.service.unlikeById(id)
-            if (!response.isSuccessful){
+            if (!response.isSuccessful) {
                 throw RuntimeException(response.message())
             }
         } catch (e: IOException) {
@@ -111,7 +117,7 @@ class PostRepositoryImpl(context: Application, private val postDao: PostDao) : P
 
     override suspend fun save(post: Post) {
         try {
-            val response = PostApi.service.save(post)
+            val response = PostApi.service.save(post.copy(attachment = null))
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -122,6 +128,43 @@ class PostRepositoryImpl(context: Application, private val postDao: PostDao) : P
         } catch (e: Exception) {
             throw ru.netology.nmedia.error.UnknownError
         }
+    }
+
+    override suspend fun saveWithAttachment(post: Post, photoModel: PhotoModel) {
+        try {
+            val media = uploadMedia(photoModel)
+
+            val response = PostApi.service.save(
+                post.copy(
+                    attachment = Attachment(
+                        media.id,
+                        "",
+                        AttachmentType.IMAGE
+                    )
+                )
+            )
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            postDao.insert(PostEntity.fromDto(body, hidden = false))
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw ru.netology.nmedia.error.UnknownError
+        }
+    }
+
+    private suspend fun uploadMedia(model: PhotoModel): Media {
+        val response = PostApi.service.uploadMedia(
+            MultipartBody.Part.createFormData("file", "file", model.file.asRequestBody())
+        )
+
+        if (!response.isSuccessful) {
+            throw ApiError(response.code(), response.message())
+        }
+
+        return requireNotNull(response.body())
     }
 
     override fun saveNewPostContent(text: String) {

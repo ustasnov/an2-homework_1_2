@@ -79,8 +79,8 @@
         android:contentDescription="@string/view_move_description"
         android:scaleType="fitXY"
         app:layout_constraintTop_toBottomOf="@id/barrier"
-        app:srcCompat="@drawable/youtube"
-        tools:layout_editor_absoluteX="0dp" />
+        tools:layout_editor_absoluteX="0dp"
+        tools:srcCompat="@drawable/youtube" />
 
     <ImageView
         android:id="@+id/playVideo"
@@ -124,8 +124,8 @@
         android:contentDescription="@string/view_move_description"
         android:scaleType="fitXY"
         app:layout_constraintTop_toBottomOf="@id/barrier1"
-        app:srcCompat="@drawable/youtube"
-        tools:layout_editor_absoluteX="0dp" />
+        tools:layout_editor_absoluteX="0dp"
+        tools:srcCompat="@drawable/youtube" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier2"

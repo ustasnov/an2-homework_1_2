@@ -34,4 +34,6 @@
     <string name="server_error_warning">An error occurred while requesting the server, please try again</string>
     <string name="empty_content_warning">Content can\'t be empty</string>
     <string name="new_posts">New posts</string>
+    <string name="clear">Clear</string>
+    <string name="image_description">Image</string>
 </resources>
