@@ -4,8 +4,10 @@ import android.app.Application
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.ErrorType
 import ru.netology.nmedia.dto.Post
@@ -19,9 +21,10 @@ import ru.netology.nmedia.utils.SingleLiveEvent
 val empty = Post(
     id = 0L,
     author = "",
+    authorId = 0L,
     authorAvatar = "",
     content = "",
-    published = "",
+    published = 0L,
     likedByMe = false,
     likes = 0.0,
     shared = 0.0,
@@ -33,8 +36,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PostRepository = PostRepositoryImpl(
         application, AppDb.getInstance(application).postDao()
     )
-    val data: LiveData<FeedModel> =
-        repository.data.map(::FeedModel).asLiveData(Dispatchers.Default)
+    val data: LiveData<FeedModel> = AppAuth.getInstance().data.flatMapLatest { token ->
+        repository.data
+            .map { posts ->
+                posts.map {
+                    it.copy(ownedByMe = it.authorId == token?.id)
+                }
+            }
+            .map {
+                FeedModel(it)
+            }
+    }.asLiveData(Dispatchers.Default)
+
 
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
@@ -60,14 +73,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             Post(
                 0,
                 "",
+                0L,
                 "",
                 "",
-                "",
+                0L,
                 false,
                 0.0,
                 0.0,
                 0.0,
-                null,
                 null,
             )
         )
@@ -118,8 +131,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         try {
             edited.value?.let {
                 when (val photo = _photo.value) {
-                    null -> repository.save(it)
-                    else -> repository.saveWithAttachment(it, photo)
+                    null -> repository.save(it.copy(ownedByMe = true))
+                    else -> repository.saveWithAttachment(it.copy(ownedByMe = true), photo)
                 }
             }
             edited.value = empty

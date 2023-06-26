@@ -12,35 +12,49 @@ data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val author: String,
+    val authorId: Long,
     val authorAvatar: String,
     val content: String,
-    val published: String,
+    val published: Long,
     val likedByMe: Boolean,
     val likes: Double,
     val shared: Double,
     val views: Double,
-    val video: String?,
+    val video: String? = null,
+    val hidden: Boolean = false,
     @Embedded
     var attachment: AttachmentEmbeddable?,
-    val hidden: Boolean = false,
 ) {
-    fun toDto() = Post(id, author, authorAvatar, content, published, likedByMe, likes, shared, views, video, attachment?.toDto())
+    fun toDto() = Post(
+        id = id,
+        author = author,
+        authorId = authorId,
+        authorAvatar = authorAvatar,
+        content = content,
+        published = published,
+        likedByMe = likedByMe,
+        likes = likes,
+        shared = shared,
+        views = views,
+        video = video,
+        attachment = attachment?.toDto())
 
     companion object {
         fun fromDto(dto: Post, hidden: Boolean) =
             PostEntity(
-                dto.id,
-                dto.author,
-                dto.authorAvatar,
-                dto.content,
-                dto.published,
-                dto.likedByMe,
-                dto.likes,
-                dto.shared,
-                dto.views,
-                dto.video,
-                AttachmentEmbeddable.fromDto(dto.attachment),
-                hidden = hidden
+                id = dto.id,
+                author = dto.author,
+                authorId = dto.authorId,
+                authorAvatar = dto.authorAvatar,
+                content = dto.content,
+                published = dto.published,
+                likedByMe = dto.likedByMe,
+                likes = dto.likes,
+                shared = dto.shared,
+                views = dto.views,
+                video = dto.video,
+                hidden = hidden,
+                attachment = AttachmentEmbeddable.fromDto(dto.attachment),
             )
     }
 }

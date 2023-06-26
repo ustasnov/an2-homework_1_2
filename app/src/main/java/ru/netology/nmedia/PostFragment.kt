@@ -8,12 +8,14 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostViewHolder
 import ru.netology.nmedia.databinding.FragmentPostBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.utils.LongArg
+import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class PostFragment : Fragment(R.layout.fragment_post) {
@@ -22,6 +24,7 @@ class PostFragment : Fragment(R.layout.fragment_post) {
         get() = _binding!!
 
     val viewModel: PostViewModel by activityViewModels()
+    val authViewModel: AuthViewModel by activityViewModels()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -35,18 +38,30 @@ class PostFragment : Fragment(R.layout.fragment_post) {
 
         val viewHolder = PostViewHolder(binding.postFr, object : OnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.likeById(post)
+                if (authViewModel.isAuthorized) {
+                    viewModel.likeById(post)
+                } else {
+                    Snackbar.make(binding.root, getString(R.string.authorization_required), Snackbar.LENGTH_LONG)
+                        .setAction(R.string.login) { findNavController().navigate(R.id.authFragment) }
+                        .show()
+                }
             }
 
             override fun onShare(post: Post) {
-                viewModel.shareById(post.id)
-                val intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, post.content)
-                    type = "text/plain"
+                if (authViewModel.isAuthorized) {
+                    viewModel.shareById(post.id)
+                    val intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, post.content)
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(intent, getString(R.string.share_post))
+                    startActivity(shareIntent)
+                } else {
+                    Snackbar.make(binding.root, getString(R.string.authorization_required), Snackbar.LENGTH_LONG)
+                        .setAction(R.string.login) { findNavController().navigate(R.id.authFragment) }
+                        .show()
                 }
-                val shareIntent = Intent.createChooser(intent, getString(R.string.share_post))
-                startActivity(shareIntent)
             }
 
             override fun onEdit(post: Post) {
