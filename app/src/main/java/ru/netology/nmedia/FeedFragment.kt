@@ -172,8 +172,14 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         })
 
         binding.add.setOnClickListener {
-            viewModel.edit(empty)
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            if (authViewModel.isAuthorized) {
+                viewModel.edit(empty)
+                findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            } else {
+                Snackbar.make(binding.root, getString(R.string.authorization_required), Snackbar.LENGTH_LONG)
+                    .setAction(R.string.login) { findNavController().navigate(R.id.authFragment) }
+                    .show()
+            }
         }
 
         viewModel.newerCount.observe(viewLifecycleOwner) {
