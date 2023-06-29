@@ -84,7 +84,7 @@ class PostRepositoryImpl(context: Application, private val postDao: PostDao) : P
             postDao.likeById(id)
             val response = PostApi.service.likeById(id)
             if (!response.isSuccessful) {
-                throw RuntimeException(response.message())
+                throw ApiError(response.code(), response.message())
             }
         } catch (e: IOException) {
             throw NetworkError
@@ -98,7 +98,7 @@ class PostRepositoryImpl(context: Application, private val postDao: PostDao) : P
             postDao.unlikeById(id)
             val response = PostApi.service.unlikeById(id)
             if (!response.isSuccessful) {
-                throw RuntimeException(response.message())
+                throw ApiError(response.code(), response.message())
             }
         } catch (e: IOException) {
             throw NetworkError

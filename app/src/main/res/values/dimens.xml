@@ -7,4 +7,5 @@
     <dimen name="post_line_spase">8sp</dimen>
     <dimen name="size_80dp">80dp</dimen>
     <dimen name="attachment_dimen">230dp</dimen>
+    <dimen name="big_spacing">48dp</dimen>
 </resources>

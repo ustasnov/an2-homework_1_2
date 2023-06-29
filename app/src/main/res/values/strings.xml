@@ -36,4 +36,12 @@
     <string name="new_posts">New posts</string>
     <string name="clear">Clear</string>
     <string name="image_description">Image</string>
+    <string name="authorize">Authorize</string>
+    <string name="register">Register</string>
+    <string name="logout">Logout</string>
+    <string name="authorize_error">Authorize error</string>
+    <string name="fields_must_be_filled">Fields must be filled</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="authorization_required">Authorization required</string>
 </resources>

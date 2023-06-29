@@ -47,15 +47,16 @@ class PostViewHolder(
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
-            published.text = post.published
+            published.text = post.published.toString()
             postText.text = post.content
             favorite.isChecked = post.likedByMe
+            favorite.isCheckable = post.ownedByMe
             favorite.text = formatValue(post.likes)
             share.text = formatValue(post.shared)
             views.text = formatValue(post.views)
 
             Glide.with(avatar)
-                .load("${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}")
+                .load("${BuildConfig.BASE_URL}avatars/${post.authorAvatar}")
                 .circleCrop()
                 .placeholder(R.drawable.ic_loading_100dp)
                 .error(R.drawable.ic_error_100dp)
@@ -63,7 +64,7 @@ class PostViewHolder(
                 .into(avatar)
 
             Glide.with(attachment)
-                .load("${BuildConfig.BASE_URL}/media/${post.attachment?.url}")
+                .load("${BuildConfig.BASE_URL}media/${post.attachment?.url}")
                 .placeholder(R.drawable.ic_loading_100dp)
                 .error(R.drawable.ic_error_100dp)
                 .timeout(10_000)
@@ -97,6 +98,7 @@ class PostViewHolder(
                 onInteractionListener.onShare(post)
             }
 
+            menu.isVisible = post.ownedByMe
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)

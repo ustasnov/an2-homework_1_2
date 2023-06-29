@@ -17,11 +17,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.utils.AndroidUtils
 import ru.netology.nmedia.utils.BooleanArg
 import ru.netology.nmedia.utils.StringArg
+import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class NewPostFragment : Fragment(R.layout.fragment_new_post) {
@@ -31,6 +33,7 @@ class NewPostFragment : Fragment(R.layout.fragment_new_post) {
         get() = _binding!!
 
     val viewModel: PostViewModel by activityViewModels()
+    val authViewModel: AuthViewModel by activityViewModels()
 
     private val photoPickerContract =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -62,6 +65,7 @@ class NewPostFragment : Fragment(R.layout.fragment_new_post) {
 
         arguments?.isNewPost.let {
             if (it == null || it) {
+                viewModel.clearPhoto()
                 viewModel.toggleNewPost(true)
             }
         }
@@ -84,17 +88,23 @@ class NewPostFragment : Fragment(R.layout.fragment_new_post) {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                 when (menuItem.itemId) {
                     R.id.save -> {
-                        val text = binding.content.text.toString()
-                        if (text.isNotBlank()) {
-                            viewModel.changeContent(text)
-                            viewModel.save()
-                            viewModel.saveNewPostContent("")
+                        if (authViewModel.isAuthorized) {
+                            val text = binding.content.text.toString()
+                            if (text.isNotBlank()) {
+                                viewModel.changeContent(text)
+                                viewModel.save()
+                                viewModel.saveNewPostContent("")
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    getString(R.string.empty_content_warning),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         } else {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.empty_content_warning),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Snackbar.make(binding.root, getString(R.string.authorization_required), Snackbar.LENGTH_LONG)
+                                .setAction(R.string.login) { findNavController().navigate(R.id.authFragment) }
+                                .show()
                         }
                         AndroidUtils.hideKeyboard(requireView())
                         true

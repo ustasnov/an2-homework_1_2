@@ -30,4 +30,12 @@
     <string name="new_posts">Свежие записи</string>
     <string name="clear">Очистить</string>
     <string name="image_description">Изображение</string>
+    <string name="authorize">Войти</string>
+    <string name="register">Регистрация</string>
+    <string name="logout">Выйти</string>
+    <string name="authorize_error">Ошибка авторизации</string>
+    <string name="fields_must_be_filled">Поля должны быть заполнены</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="authorization_required">Требуется авторизация</string>
 </resources>
