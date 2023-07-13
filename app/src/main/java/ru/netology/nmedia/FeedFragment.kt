@@ -8,10 +8,11 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.PostFragment.Companion.idArg
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -53,13 +54,15 @@ fun formatValue(value: Double): String {
     }
 }
 
+@AndroidEntryPoint
 class FeedFragment : Fragment(R.layout.fragment_feed) {
     var _binding: FragmentFeedBinding? = null
     val binding: FragmentFeedBinding
         get() = _binding!!
 
-    val viewModel: PostViewModel by activityViewModels()
-    val authViewModel: AuthViewModel by activityViewModels()
+    val viewModel: PostViewModel by viewModels()
+
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
