@@ -12,15 +12,18 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
 import ru.netology.nmedia.R
 import ru.netology.nmedia.actions.Action
 import ru.netology.nmedia.actions.AddNewPost
 import ru.netology.nmedia.actions.Like
 import ru.netology.nmedia.auth.AppAuth
+import javax.inject.Inject
 import kotlin.math.min
 import kotlin.random.Random
 
+@AndroidEntryPoint
 class FCMService : FirebaseMessagingService() {
     private val action = "action"
     private val content = "content"
@@ -29,6 +32,9 @@ class FCMService : FirebaseMessagingService() {
     private val pushStub by lazy {
         getString(R.string.new_notification)
     }
+
+    @Inject
+    lateinit var appAuth: AppAuth
 
     override fun onCreate() {
         super.onCreate()
@@ -45,7 +51,7 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        val authorizeId = AppAuth.getInstance().data.value?.id
+        val authorizeId = appAuth.data.value?.id
         try {
             if (message.data["action"] == null) {
                 val pushJson = message.data.values.firstOrNull()?.let { JSONObject(it) }
@@ -53,8 +59,8 @@ class FCMService : FirebaseMessagingService() {
                 val content: String = pushJson?.optString("content") ?: pushStub
                 when (recipientId) {
                     "null", authorizeId.toString() -> handlePush(content)
-                    "0" -> AppAuth.getInstance().sendPushToken()
-                    else -> AppAuth.getInstance().sendPushToken()
+                    "0" -> appAuth.sendPushToken()
+                    else -> appAuth.sendPushToken()
                 }
             } else {
                 message.data[action]?.let {
@@ -81,7 +87,7 @@ class FCMService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         println(token)
-        AppAuth.getInstance().sendPushToken(token)
+        appAuth.sendPushToken(token)
     }
 
     private fun handlePush(content: String) {

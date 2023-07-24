@@ -3,19 +3,21 @@ package ru.netology.nmedia
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.databinding.FragmentPostPhotoBinding
 import ru.netology.nmedia.utils.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
+@AndroidEntryPoint
 class PostPhotoFragment : Fragment(R.layout.fragment_post_photo) {
     var _binding: FragmentPostPhotoBinding? = null
     val binding: FragmentPostPhotoBinding
         get() = _binding!!
 
-    val viewModel: PostViewModel by activityViewModels()
+    val viewModel: PostViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

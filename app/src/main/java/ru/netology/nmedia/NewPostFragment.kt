@@ -14,10 +14,11 @@ import androidx.core.view.MenuProvider
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.utils.AndroidUtils
@@ -26,14 +27,16 @@ import ru.netology.nmedia.utils.StringArg
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 
+@AndroidEntryPoint
 class NewPostFragment : Fragment(R.layout.fragment_new_post) {
 
     var _binding: FragmentNewPostBinding? = null
     val binding: FragmentNewPostBinding
         get() = _binding!!
 
-    val viewModel: PostViewModel by activityViewModels()
-    val authViewModel: AuthViewModel by activityViewModels()
+    val viewModel: PostViewModel by viewModels()
+
+    private val authViewModel: AuthViewModel by viewModels()
 
     private val photoPickerContract =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -102,7 +105,11 @@ class NewPostFragment : Fragment(R.layout.fragment_new_post) {
                                 ).show()
                             }
                         } else {
-                            Snackbar.make(binding.root, getString(R.string.authorization_required), Snackbar.LENGTH_LONG)
+                            Snackbar.make(
+                                binding.root,
+                                getString(R.string.authorization_required),
+                                Snackbar.LENGTH_LONG
+                            )
                                 .setAction(R.string.login) { findNavController().navigate(R.id.authFragment) }
                                 .show()
                         }
