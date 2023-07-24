@@ -34,6 +34,9 @@ class AppAuth @Inject constructor(
     private val _data = MutableStateFlow<Token?>(null)
     val data = _data.asStateFlow()
 
+    @Inject
+    lateinit var firebaseMessaging: FirebaseMessaging
+
     init {
         val token = prefs.getString(TOKEN_KEY, null)
         val id = prefs.getLong(ID_KEY, 0L)
@@ -77,7 +80,7 @@ class AppAuth @Inject constructor(
     fun sendPushToken(token: String? = null) {
         CoroutineScope(Dispatchers.Default).launch {
             try {
-                val request = PushToken(token ?: FirebaseMessaging.getInstance().token.await())
+                val request = PushToken(token ?: firebaseMessaging.token.await())
                 val entryPoint =
                     EntryPointAccessors.fromApplication(context, AppAuthEntryPoint::class.java)
                 entryPoint.getApiService().sendPushToken(request)
