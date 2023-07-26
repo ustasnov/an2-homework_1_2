@@ -74,7 +74,6 @@ class AppAuth @Inject constructor(
     @EntryPoint
     interface AppAuthEntryPoint {
         fun getApiService(): ApiService
-
     }
 
     fun sendPushToken(token: String? = null) {

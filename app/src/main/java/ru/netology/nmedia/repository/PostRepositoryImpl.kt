@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -35,8 +37,14 @@ class PostRepositoryImpl @Inject constructor(
     private var newPostContentValue = MutableLiveData<String>()
     private val currentAuthor = context.getString(R.string.authorName)
 
-    override val data: Flow<List<Post>> =
-        postDao.getAll().map { it.map(PostEntity::toDto) }
+    override val data = Pager(
+        config = PagingConfig(pageSize = 10, enablePlaceholders =  false),
+        pagingSourceFactory = {
+            PostPagingSource(
+                apiService
+            )
+        }
+    ).flow
 
     override fun getNewer(id: Long): Flow<Int> = flow {
         while (true) {

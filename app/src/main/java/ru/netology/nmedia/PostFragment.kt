@@ -7,9 +7,12 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.map
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nmedia.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostViewHolder
@@ -93,12 +96,14 @@ class PostFragment : Fragment(R.layout.fragment_post) {
 
         val postId = requireArguments().idArg
 
+        /*
         binding.postFr.apply {
             viewModel.data.observe(viewLifecycleOwner) { it ->
                 val post = it.posts.find { it.id == postId } ?: return@observe
                 post.let { viewHolder.bind(post) }
             }
         }
+        */
 
         setupBackPressed()
     }

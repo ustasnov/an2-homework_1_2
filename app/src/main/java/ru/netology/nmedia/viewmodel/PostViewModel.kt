@@ -1,11 +1,12 @@
 package ru.netology.nmedia.viewmodel
 
 import androidx.lifecycle.*
+import androidx.lifecycle.switchMap
+import androidx.paging.PagingData
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.ErrorType
@@ -38,17 +39,13 @@ class PostViewModel @Inject constructor(
     appAuth: AppAuth,
 ) : ViewModel() {
 
-    val data: LiveData<FeedModel> = appAuth.data.flatMapLatest { token ->
-        repository.data
-            .map { posts ->
-                posts.map {
-                    it.copy(ownedByMe = it.authorId == token?.id)
-                }
+    val data: Flow<PagingData<Post>> = appAuth.data.
+        flatMapLatest { token ->
+            repository.data
+                .map { posts ->
+                    posts.map { it.copy(ownedByMe = it.authorId == token?.id) }
             }
-            .map {
-                FeedModel(it)
-            }
-    }.asLiveData(Dispatchers.Default)
+    }.flowOn(Dispatchers.Default)
 
 
     private val _dataState = MutableLiveData<FeedModelState>()
@@ -89,11 +86,13 @@ class PostViewModel @Inject constructor(
     val currentPost: LiveData<Post>
         get() = _currentPost
 
+    /*
     val newerCount: LiveData<Int> = data.switchMap {
         repository.getNewer(it.posts.firstOrNull()?.id ?: 0L)
             .catch { e -> e.printStackTrace() }
             .asLiveData(Dispatchers.Default)
     }.distinctUntilChanged()
+    */
 
     init {
         loadPosts()

@@ -9,10 +9,13 @@ import android.view.View.VISIBLE
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nmedia.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.PostFragment.Companion.idArg
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -127,21 +130,43 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             }
 
             override fun onViewPost(post: Post) {
+                /*
                 findNavController().navigate(
                     R.id.action_feedFragment_to_postFragment,
                     Bundle().apply {
                         idArg = post.id
                     }
                 )
+                */
             }
         })
 
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner) { state ->
 
+        lifecycleScope.launchWhenCreated {
+            viewModel.data.collectLatest {
+                adapter.submitData(it)
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collectLatest {
+                binding.swiperefresh.isRefreshing = it.refresh is LoadState.Loading
+                        || it.append is LoadState.Loading
+                        || it.prepend is LoadState.Loading
+            }
+        }
+
+        binding.swiperefresh.setOnRefreshListener {
+            adapter.refresh()
+        }
+
+        /*
+        viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
             binding.emptyText.isVisible = state.empty
         }
+        */
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.swiperefresh.isRefreshing = state.refreshing
@@ -185,23 +210,27 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             }
         }
 
+        /*
         viewModel.newerCount.observe(viewLifecycleOwner) {
             if (it > 0) {
                 binding.newPostsButton.visibility = VISIBLE
             }
         }
+        */
 
         binding.newPostsButton.setOnClickListener {
             viewModel.showHiddenPosts()
             it.visibility = GONE
         }
 
+        /*
         val swipeRefresh = binding.swiperefresh
         swipeRefresh.setOnRefreshListener {
             swipeRefresh.isRefreshing = true
             viewModel.refresh()
             swipeRefresh.isRefreshing = false
         }
+         */
     }
 
     override fun onDestroyView() {
