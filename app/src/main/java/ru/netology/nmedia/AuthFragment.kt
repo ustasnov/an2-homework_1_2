@@ -34,7 +34,6 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             if (state.success) {
                 postViewModel.refresh()
                 viewModel.clean()
-                postViewModel.loadPosts();
                 findNavController().navigateUp()
             }
         }

@@ -108,7 +108,7 @@ class AppActivity : AppCompatActivity() {
                         }
                         R.id.logout -> {
                             appAuth.clearAuth()
-                            postViewModel.loadPosts();
+                            postViewModel.refresh()
                             true
                         }
                         else -> {
