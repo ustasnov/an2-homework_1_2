@@ -99,9 +99,9 @@ class PostViewModel @Inject constructor(
     }
 
     fun loadPosts() = viewModelScope.launch {
-        _dataState.value = FeedModelState(loading = true)
         try {
-            repository.getAll()
+            _dataState.value = FeedModelState(loading = true)
+            //repository.getAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = ErrorType.LOADING)
@@ -109,9 +109,9 @@ class PostViewModel @Inject constructor(
     }
 
     fun refresh() = viewModelScope.launch {
-        _dataState.value = FeedModelState(refreshing = true)
         try {
-            repository.getAll()
+            _dataState.value = FeedModelState(refreshing = true)
+            //repository.getAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = ErrorType.LOADING)

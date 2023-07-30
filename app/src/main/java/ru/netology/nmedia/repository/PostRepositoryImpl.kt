@@ -71,6 +71,7 @@ class PostRepositoryImpl @Inject constructor(
         postDao.insert(posts.map { PostEntity.fromDto(it, hidden = false) })
     }
 
+    /*
     override suspend fun getAllVisible() {
         val response = apiService.getAll()
         if (!response.isSuccessful) {
@@ -79,6 +80,7 @@ class PostRepositoryImpl @Inject constructor(
         val posts = response.body() ?: throw RuntimeException("body is null")
         postDao.insert(posts.map { PostEntity.fromDto(it, hidden = false) })
     }
+    */
 
     override suspend fun showAll() {
         try {

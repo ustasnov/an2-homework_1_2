@@ -10,7 +10,7 @@ interface PostRepository {
     val data: Flow<PagingData<Post>>
     fun getNewer(id: Long): Flow<Int>
     suspend fun getAll()
-    suspend fun getAllVisible()
+    //suspend fun getAllVisible()
     suspend fun showAll()
     suspend fun likeById(id: Long)
     suspend fun unlikeById(id: Long)
