@@ -50,6 +50,7 @@ class PostRemoteMediator(
                 response.code(),
                 response.message(),
             )
+
             appDb.withTransaction {
                 when (loadType) {
                     LoadType.REFRESH -> {
