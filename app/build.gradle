@@ -59,8 +59,9 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:1.5.5"
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
-    implementation 'androidx.room:room-runtime:2.5.0'
+    implementation 'androidx.room:room-runtime:2.5.1'
     implementation "androidx.room:room-ktx:2.5.1"
+    implementation "androidx.room:room-paging:2.5.1"
     implementation 'com.google.firebase:firebase-messaging-ktx'
     implementation 'com.google.android.gms:play-services-base:18.2.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'

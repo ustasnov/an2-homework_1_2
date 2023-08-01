@@ -1,7 +1,6 @@
 package ru.netology.nmedia.viewmodel
 
 import androidx.lifecycle.*
-import androidx.lifecycle.switchMap
 import androidx.paging.PagingData
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,7 +10,6 @@ import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.ErrorType
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
@@ -39,11 +37,10 @@ class PostViewModel @Inject constructor(
     appAuth: AppAuth,
 ) : ViewModel() {
 
-    val data: Flow<PagingData<Post>> = appAuth.data.
-        flatMapLatest { token ->
-            repository.data
-                .map { posts ->
-                    posts.map { it.copy(ownedByMe = it.authorId == token?.id) }
+    val data: Flow<PagingData<Post>> = appAuth.data.flatMapLatest { token ->
+        repository.data
+            .map { posts ->
+                posts.map { it.copy(ownedByMe = it.authorId == token?.id) }
             }
     }.flowOn(Dispatchers.Default)
 
@@ -86,14 +83,6 @@ class PostViewModel @Inject constructor(
     val currentPost: LiveData<Post>
         get() = _currentPost
 
-    /*
-    val newerCount: LiveData<Int> = data.switchMap {
-        repository.getNewer(it.posts.firstOrNull()?.id ?: 0L)
-            .catch { e -> e.printStackTrace() }
-            .asLiveData(Dispatchers.Default)
-    }.distinctUntilChanged()
-    */
-
     init {
         loadPosts()
     }
@@ -114,16 +103,6 @@ class PostViewModel @Inject constructor(
             //repository.getAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
-            _dataState.value = FeedModelState(error = ErrorType.LOADING)
-        }
-    }
-
-    fun showHiddenPosts() = viewModelScope.launch {
-        try {
-            _dataState.value = FeedModelState(loading = true)
-            repository.showAll()
-            _dataState.value = FeedModelState()
-        } catch (e: java.lang.Exception) {
             _dataState.value = FeedModelState(error = ErrorType.LOADING)
         }
     }
@@ -183,7 +162,6 @@ class PostViewModel @Inject constructor(
     }
 
     fun removeById(id: Long) = viewModelScope.launch {
-        //_lastId.postValue(id)
         _currentPostId.setValue(id)
         try {
             repository.removeById(_currentPostId.value!!)
