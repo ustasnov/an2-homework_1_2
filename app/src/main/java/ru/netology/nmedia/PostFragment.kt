@@ -7,12 +7,9 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.paging.map
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nmedia.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostViewHolder
@@ -47,7 +44,11 @@ class PostFragment : Fragment(R.layout.fragment_post) {
                 if (authViewModel.isAuthorized) {
                     viewModel.likeById(post)
                 } else {
-                    Snackbar.make(binding.root, getString(R.string.authorization_required), Snackbar.LENGTH_LONG)
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.authorization_required),
+                        Snackbar.LENGTH_LONG
+                    )
                         .setAction(R.string.login) { findNavController().navigate(R.id.authFragment) }
                         .show()
                 }
@@ -64,7 +65,11 @@ class PostFragment : Fragment(R.layout.fragment_post) {
                     val shareIntent = Intent.createChooser(intent, getString(R.string.share_post))
                     startActivity(shareIntent)
                 } else {
-                    Snackbar.make(binding.root, getString(R.string.authorization_required), Snackbar.LENGTH_LONG)
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.authorization_required),
+                        Snackbar.LENGTH_LONG
+                    )
                         .setAction(R.string.login) { findNavController().navigate(R.id.authFragment) }
                         .show()
                 }

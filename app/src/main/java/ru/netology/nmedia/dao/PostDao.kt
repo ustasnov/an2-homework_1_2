@@ -1,5 +1,6 @@
 package ru.netology.nmedia.dao
 
+import androidx.paging.PagingSource
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.dto.AttachmentType
@@ -7,8 +8,11 @@ import ru.netology.nmedia.entity.PostEntity
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM PostEntity WHERE hidden = 0 ORDER BY id DESC")
+    @Query("SELECT * FROM PostEntity ORDER BY id DESC")
     fun getAll(): Flow<List<PostEntity>>
+
+    @Query("SELECT * FROM PostEntity ORDER BY id DESC")
+    fun getPagingSource(): PagingSource<Int, PostEntity>
 
     @Query("SELECT COUNT(*) == 0 FROM PostEntity")
     suspend fun isEmpty(): Boolean
@@ -35,16 +39,21 @@ interface PostDao {
     )
     suspend fun likeById(id: Long)
 
-    @Query("""
+    @Query(
+        """
         UPDATE PostEntity SET
         likes = likes + CASE WHEN likedByMe THEN -1 ELSE 1 END, 
         likedByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END
         WHERE id = :id
-        """)
+        """
+    )
     suspend fun unlikeById(id: Long)
 
     @Query("DELETE FROM PostEntity WHERE id = :id")
     suspend fun removeById(id: Long)
+
+    @Query("DELETE FROM PostEntity")
+    suspend fun clear()
 
     @Query(
         """
@@ -55,15 +64,6 @@ interface PostDao {
     )
     suspend fun shareById(id: Long)
 
-    @Query(
-        """
-        UPDATE PostEntity SET
-        hidden = 0 
-        WHERE hidden = 1
-        """
-    )
-    suspend fun showAll()
-
     @Query("SELECT COUNT(*) FROM PostEntity")
     suspend fun countPosts(): Int
 }
@@ -71,6 +71,7 @@ interface PostDao {
 class Converters {
     @TypeConverter
     fun toAttachmentType(value: String) = enumValueOf<AttachmentType>(value)
+
     @TypeConverter
     fun fromAttachmentType(value: AttachmentType) = value.name
 }
