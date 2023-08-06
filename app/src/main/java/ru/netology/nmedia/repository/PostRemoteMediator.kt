@@ -26,11 +26,11 @@ class PostRemoteMediator(
         try {
             val response = when (loadType) {
                 LoadType.REFRESH -> {
-                    if (!postDao.isEmpty()) {
-                        val id = postRemoteKeyDao.max() ?: return MediatorResult.Success(false)
+                    val id = postRemoteKeyDao.max()
+                    if (id != null) {
                         apiService.getAfter(id, state.config.pageSize)
                     } else {
-                        apiService.getLatest(state.config.pageSize)
+                        apiService.getLatest(state.config.initialLoadSize)
                     }
                 }
                 LoadType.PREPEND -> {
@@ -55,17 +55,19 @@ class PostRemoteMediator(
                 when (loadType) {
                     LoadType.REFRESH -> {
                         postRemoteKeyDao.insert(
-                            listOf(
-                                PostRemoteKeyEntity(
-                                    PostRemoteKeyEntity.KeyType.AFTER,
-                                    body.first().id
-                                ),
-                                PostRemoteKeyEntity(
-                                    PostRemoteKeyEntity.KeyType.BEFORE,
-                                    body.last().id
-                                ),
-                            )
+                            PostRemoteKeyEntity(
+                                type = PostRemoteKeyEntity.KeyType.AFTER,
+                                key = body.first().id,
+                            ),
                         )
+                        if (postDao.isEmpty()) {
+                            postRemoteKeyDao.insert(
+                                PostRemoteKeyEntity(
+                                    type = PostRemoteKeyEntity.KeyType.BEFORE,
+                                    key = body.last().id,
+                                )
+                            )
+                        }
                     }
                     LoadType.APPEND -> {
                         postRemoteKeyDao.insert(
