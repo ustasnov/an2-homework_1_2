@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nmedia.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
+import ru.netology.nmedia.adapter.PostLoadingStateAdapter
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.ErrorType
@@ -138,26 +140,29 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             }
         })
 
-        binding.list.adapter = adapter
+        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = PostLoadingStateAdapter { adapter.retry() },
+            footer = PostLoadingStateAdapter { adapter.retry() }
+        )
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.data.collectLatest {
-                adapter.submitData(it)
-            }
-        }
-
-        lifecycleScope.launchWhenCreated {
-            adapter.loadStateFlow.collectLatest {
-                binding.swiperefresh.isRefreshing = it.refresh is LoadState.Loading
-                        || it.append is LoadState.Loading
-                        || it.prepend is LoadState.Loading
-            }
-        }
-
-        binding.swiperefresh.setOnRefreshListener {
+        authViewModel.data.observe(viewLifecycleOwner) {
             adapter.refresh()
         }
 
+        lifecycleScope.launchWhenCreated {
+            viewModel.data.collectLatest(adapter::submitData)
+        }
+
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collectLatest { state ->
+                binding.swiperefresh.isRefreshing =
+                    state.refresh is LoadState.Loading
+            }
+        }
+
+        binding.swiperefresh.setOnRefreshListener(adapter::refresh)
+
+        /*
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.swiperefresh.isRefreshing = state.refreshing
             when (state.error) {
@@ -180,7 +185,9 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 null -> Unit
             }
         }
+         */
 
+        /*
         adapter.registerAdapterDataObserver(object : AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 if (positionStart == 0) {
@@ -188,6 +195,8 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 }
             }
         })
+
+         */
 
         binding.add.setOnClickListener {
             if (authViewModel.isAuthorized) {
