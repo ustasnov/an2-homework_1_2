@@ -34,7 +34,9 @@ class PostRemoteMediator(
                     }
                 }
                 LoadType.PREPEND -> {
-                    return MediatorResult.Success(true)
+                    //return MediatorResult.Success(true)
+                    val id = postRemoteKeyDao.max() ?: return  MediatorResult.Success(false)
+                    apiService.getAfter(id, state.config.pageSize)
                 }
                 LoadType.APPEND -> {
                     val id = postRemoteKeyDao.min() ?: return MediatorResult.Success(false)
@@ -54,13 +56,9 @@ class PostRemoteMediator(
             appDb.withTransaction {
                 when (loadType) {
                     LoadType.REFRESH -> {
-                        postRemoteKeyDao.insert(
-                            PostRemoteKeyEntity(
-                                type = PostRemoteKeyEntity.KeyType.AFTER,
-                                key = body.first().id,
-                            ),
-                        )
-                        if (postDao.isEmpty()) {
+                        postDao.clear()
+
+                        if (body.isNotEmpty()) {
                             postRemoteKeyDao.insert(
                                 PostRemoteKeyEntity(
                                     type = PostRemoteKeyEntity.KeyType.BEFORE,
@@ -69,13 +67,25 @@ class PostRemoteMediator(
                             )
                         }
                     }
+                    LoadType.PREPEND -> {
+                        if (body.isNotEmpty()) {
+                            postRemoteKeyDao.insert(
+                                PostRemoteKeyEntity(
+                                    type = PostRemoteKeyEntity.KeyType.AFTER,
+                                    key = body.first().id,
+                                ),
+                            )
+                        }
+                    }
                     LoadType.APPEND -> {
-                        postRemoteKeyDao.insert(
-                            PostRemoteKeyEntity(
-                                PostRemoteKeyEntity.KeyType.BEFORE,
-                                body.last().id
-                            ),
-                        )
+                        if (body.isNotEmpty()) {
+                            postRemoteKeyDao.insert(
+                                PostRemoteKeyEntity(
+                                    PostRemoteKeyEntity.KeyType.BEFORE,
+                                    body.last().id
+                                )
+                            )
+                        }
                     }
                     else -> Unit
                 }
